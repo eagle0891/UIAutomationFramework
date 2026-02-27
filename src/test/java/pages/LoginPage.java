@@ -29,5 +29,5 @@ public class LoginPage {
         driver.findElement(loginButton).click();
     }
 
-    //Testing webhook
+    //email test
 }
