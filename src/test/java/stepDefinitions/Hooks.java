@@ -18,7 +18,9 @@ public class Hooks {
 
     @Before
     public void setUp() {
-        String browser = ConfigReader.getProperty("browser");
+        //String browser = ConfigReader.getProperty("browser");
+        // Check Command Line first, then config file
+        String browser = System.getProperty("browser", ConfigReader.getProperty("browser"));
 
         // Check Command Line (-Dheadless) first; if null, check properties file
         String headlessCmd = System.getProperty("headless");
@@ -31,6 +33,10 @@ public class Hooks {
             ChromeOptions options = new ChromeOptions();
             if (isHeadless) {
                 options.addArguments("--headless=new");
+                // --- ADD THESE FOR JENKINS STABILITY ---
+                options.addArguments("--no-sandbox"); // Bypasses OS security model (required for Docker/Jenkins)
+                options.addArguments("--disable-dev-shm-usage"); // Uses /tmp instead of memory for shared heap
+                options.addArguments("--window-size=1920,1080"); // Sets a default "screen" size for screenshots
             }
             driver = new ChromeDriver(options);
         } else if (browser.equalsIgnoreCase("firefox")) {
