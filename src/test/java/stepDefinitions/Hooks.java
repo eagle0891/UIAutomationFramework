@@ -49,7 +49,7 @@ public class Hooks {
             driver = new FirefoxDriver(options);
         }
 
-        String env = System.getProperty("env", "TEST"); // Default to TEST if null
+        String env = System.getProperty("env", "QA"); // Default to TEST if null
         String url;
 
         switch (env.toUpperCase()) {
