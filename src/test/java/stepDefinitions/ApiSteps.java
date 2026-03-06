@@ -12,10 +12,12 @@ public class ApiSteps {
     private static final String BASE_URL = "https://reqres.in/api";
 
     @Given("I prepare a request for the users endpoint")
+    @Given("I prepare a request for the users endpoint")
     public void i_prepare_a_request() {
         request = RestAssured.given()
                 .header("Content-Type", "application/json")
-                .header("User-Agent", "PostmanRuntime/7.32.2"); // Pretending to be a common tool
+                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8")
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
     }
 
     @When("I send a GET request to fetch user with ID {int}")
