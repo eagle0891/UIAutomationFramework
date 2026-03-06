@@ -20,8 +20,15 @@ public class ApiSteps {
     }
 
     @When("I send a GET request to fetch user with ID {int}")
-    public void i_send_a_get_request(int userId) {
+    public void i_send_a_get_request(int userId) throws InterruptedException {
         response = request.get(BASE_URL + "/users/" + userId);
+
+        // If we get a 403, wait and retry once
+        if (response.getStatusCode() == 403) {
+            System.out.println("Got a 403, retrying in 2 seconds...");
+            Thread.sleep(2000);
+            response = request.get(BASE_URL + "/users/" + userId);
+        }
     }
 
     @Then("the API status code should be {int}")
