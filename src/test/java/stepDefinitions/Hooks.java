@@ -17,7 +17,10 @@ public class Hooks {
     public static WebDriver driver;
 
     @Before
-    public void setUp() {
+    public void setUp(Scenario scenario) {
+        // Only start the browser if the scenario is NOT an API test
+        if (!scenario.getSourceTagNames().contains("@api")) {
+            System.out.println("Starting Browser for UI Test...");
         //String browser = ConfigReader.getProperty("browser");
         // Check Command Line first, then config file
         String browser = System.getProperty("browser", ConfigReader.getProperty("browser"));
@@ -62,21 +65,23 @@ public class Hooks {
             default:
                 url = "https://www.saucedemo.com"; // Your dev/test environment
         }
-
         driver.get(url);
+        } else {
+            System.out.println("API Test detected - Skipping Browser Setup.");
+        }
     }
 
     @After
     public void tearDown(Scenario scenario) {
-        if (scenario.isFailed()) {
-            // Take a screenshot as a byte array
-            final byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-            // Attach it to the Cucumber scenario (the adapter will pick this up)
-            scenario.attach(screenshot, "image/png", "Failed_Step_Screenshot");
-        }
-
+        // Only try to quit or take screenshots if the driver was actually initialized
         if (driver != null) {
-            driver.quit();
+            if (scenario.isFailed()) {
+                // Take a screenshot as a byte array
+                final byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+                // Attach it to the Cucumber scenario (the adapter will pick this up)
+                scenario.attach(screenshot, "image/png", "Failed_Step_Screenshot");
+            }
+                driver.quit();
         }
     }
 }

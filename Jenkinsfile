@@ -8,24 +8,29 @@ pipeline {
     }
 
     stages {
-        stage('Cleanup') {
-            steps {
-                echo "Cleaning up workspace..."
-                cleanWs()
+            stage('Cleanup & Checkout') {
+                steps {
+                    cleanWs()
+                    checkout scm
+                }
             }
-        }
 
-        stage('Checkout') {
-            steps {
-                checkout scm
+            stage('API Health Checks') {
+                steps {
+                    echo "Running API Layer Tests for ${params.ENVIRONMENT}..."
+                    // Runs ONLY tests tagged with @api
+                    // Use clean here to start fresh
+                    //sh "mvn test -Dcucumber.filter.tags='@api' -Denv=${params.ENVIRONMENT}"
+                    sh "mvn clean test -Dcucumber.filter.tags='@api' -Denv=${params.ENVIRONMENT}"
+                }
             }
-        }
 
-        stage('Execute Tests') {
-            steps {
-                script {
-                    // We pass Jenkins parameters directly into your Maven command
-                    sh "mvn clean test -Denv=${params.ENVIRONMENT} -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS}"
+            stage('UI Regression') {
+                steps {
+                    echo "API Passed. Running UI Layer for ${params.ENVIRONMENT} on ${params.BROWSER}..."
+                    // Runs ONLY tests tagged with @ui
+                    // DO NOT use clean here, or you'll delete the API results from the report
+                    sh "mvn test -Dcucumber.filter.tags='@ui' -Denv=${params.ENVIRONMENT} -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS}"
                 }
             }
         }
