@@ -10,7 +10,7 @@ public class ConfigReader {
     static {
         try {
             // Get environment from Maven command line, default to 'qa'
-            String env = System.getProperty("env", "qa");
+            String env = System.getProperty("env", "QA");
             String path = "src/test/resources/config/" + env + ".properties";
 
             FileInputStream input = new FileInputStream(path);
