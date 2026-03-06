@@ -12,7 +12,6 @@ public class ApiSteps {
     private static final String BASE_URL = "https://reqres.in/api";
 
     @Given("I prepare a request for the users endpoint")
-    @Given("I prepare a request for the users endpoint")
     public void i_prepare_a_request() {
         request = RestAssured.given()
                 .header("Content-Type", "application/json")
