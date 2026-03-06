@@ -14,7 +14,8 @@ public class ApiSteps {
     @Given("I prepare a request for the users endpoint")
     public void i_prepare_a_request() {
         request = RestAssured.given()
-                .header("Content-Type", "application/json");
+                .header("Content-Type", "application/json")
+                .header("User-Agent", "PostmanRuntime/7.32.2"); // Pretending to be a common tool
     }
 
     @When("I send a GET request to fetch user with ID {int}")

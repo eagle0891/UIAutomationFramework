@@ -73,15 +73,22 @@ public class Hooks {
 
     @After
     public void tearDown(Scenario scenario) {
-        // Only try to quit or take screenshots if the driver was actually initialized
+        // Only proceed if the driver was actually started (UI tests)
         if (driver != null) {
-            if (scenario.isFailed()) {
-                // Take a screenshot as a byte array
-                final byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-                // Attach it to the Cucumber scenario (the adapter will pick this up)
-                scenario.attach(screenshot, "image/png", "Failed_Step_Screenshot");
-            }
+            try {
+                if (scenario.isFailed()) {
+                    // This is the line that was crashing during API failures
+                    final byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+                    scenario.attach(screenshot, "image/png", "Failed_Step_Screenshot");
+                }
+            } catch (Exception e) {
+                System.out.println("Could not take screenshot: " + e.getMessage());
+            } finally {
                 driver.quit();
+                driver = null; // Reset to null to avoid side effects in next scenario
+            }
+        } else {
+            System.out.println("No browser session to close for this scenario.");
         }
     }
 }
