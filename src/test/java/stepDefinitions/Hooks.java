@@ -48,6 +48,22 @@ public class Hooks {
             }
             driver = new FirefoxDriver(options);
         }
+
+        String env = System.getProperty("env", "TEST"); // Default to TEST if null
+        String url;
+
+        switch (env.toUpperCase()) {
+            case "STAGING":
+                url = "https://staging.saucedemo.com";
+                break;
+            case "PROD":
+                url = "https://www.saucedemo.com";
+                break;
+            default:
+                url = "https://test.saucedemo.com"; // Your dev/test environment
+        }
+
+        driver.get(url);
     }
 
     @After
