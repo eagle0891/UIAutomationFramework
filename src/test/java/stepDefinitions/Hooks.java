@@ -54,13 +54,13 @@ public class Hooks {
 
         switch (env.toUpperCase()) {
             case "STAGING":
-                url = "https://staging.saucedemo.com";
+                url = "https://www.saucedemo.com";
                 break;
             case "PROD":
                 url = "https://www.saucedemo.com";
                 break;
             default:
-                url = "https://test.saucedemo.com"; // Your dev/test environment
+                url = "https://www.saucedemo.com"; // Your dev/test environment
         }
 
         driver.get(url);
