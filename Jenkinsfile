@@ -32,8 +32,9 @@ pipeline {
 
     post {
         always {
+            // Add 'allowMissing: true' temporarily to see if it's a path issue
             publishHTML(target: [
-                allowMissing: false,
+                allowMissing: true,
                 alwaysLinkToLastBuild: true,
                 keepAll: true,
                 reportDir: 'target/ExtentReport',
