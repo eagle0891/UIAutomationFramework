@@ -1,5 +1,5 @@
 pipeline {
-    agent any // In a real enterprise, you'd use a specific label like 'agent { label "automation-node" }'
+    agent any
 
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['qa', 'dev', 'staging'], description: 'Select Environment')
@@ -18,9 +18,6 @@ pipeline {
         stage('API Health Checks') {
             steps {
                 echo "Running API Layer Tests for ${params.ENVIRONMENT}..."
-                // Runs ONLY tests tagged with @api
-                // Use clean here to start fresh
-                //sh "mvn test -Dcucumber.filter.tags='@api' -Denv=${params.ENVIRONMENT}"
                 sh "mvn clean test -Dcucumber.filter.tags='@api' -Denv=${params.ENVIRONMENT}"
             }
         }
@@ -28,16 +25,13 @@ pipeline {
         stage('UI Regression') {
             steps {
                 echo "API Passed. Running UI Layer for ${params.ENVIRONMENT} on ${params.BROWSER}..."
-                // Runs ONLY tests tagged with @ui
-                // DO NOT use clean here, or you'll delete the API results from the report
                 sh "mvn test -Dcucumber.filter.tags='@ui' -Denv=${params.ENVIRONMENT} -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS}"
             }
         }
-    }
+    } // End of Stages
 
     post {
         always {
-            // Archive the Extent Report so it's visible in the Jenkins UI
             publishHTML(target: [
                 allowMissing: false,
                 alwaysLinkToLastBuild: true,
@@ -46,13 +40,12 @@ pipeline {
                 reportFiles: 'SparkReport.html',
                 reportName: 'Automation Test Report'
             ])
-            // 2. NEW: Record JUnit results to create the Trend Graph
-                        // Maven stores these in target/surefire-reports/*.xml
-                        junit 'target/surefire-reports/*.xml'
+
+            // This is the magic line for the graph
+            junit 'target/surefire-reports/*.xml'
         }
         failure {
             echo "Tests failed! Sending notification..."
-            // Enterprise tip: Add Slack or Email notifications here
         }
     }
-}
+} // End of Pipeline
