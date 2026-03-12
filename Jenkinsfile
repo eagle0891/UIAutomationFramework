@@ -47,6 +47,9 @@ pipeline {
                 reportFiles: 'SparkReport.html',
                 reportName: 'Automation Test Report'
             ])
+            // 2. NEW: Record JUnit results to create the Trend Graph
+                        // Maven stores these in target/surefire-reports/*.xml
+                        junit 'target/surefire-reports/*.xml'
         }
         failure {
             echo "Tests failed! Sending notification..."
