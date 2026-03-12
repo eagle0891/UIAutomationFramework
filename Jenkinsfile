@@ -8,30 +8,29 @@ pipeline {
     }
 
     stages {
-            stage('Cleanup & Checkout') {
-                steps {
-                    cleanWs()
-                    checkout scm
-                }
+        stage('Cleanup & Checkout') {
+            steps {
+                cleanWs()
+                checkout scm
             }
+        }
 
-            stage('API Health Checks') {
-                steps {
-                    echo "Running API Layer Tests for ${params.ENVIRONMENT}..."
-                    // Runs ONLY tests tagged with @api
-                    // Use clean here to start fresh
-                    //sh "mvn test -Dcucumber.filter.tags='@api' -Denv=${params.ENVIRONMENT}"
-                    sh "mvn clean test -Dcucumber.filter.tags='@api' -Denv=${params.ENVIRONMENT}"
-                }
+        stage('API Health Checks') {
+            steps {
+                echo "Running API Layer Tests for ${params.ENVIRONMENT}..."
+                // Runs ONLY tests tagged with @api
+                // Use clean here to start fresh
+                //sh "mvn test -Dcucumber.filter.tags='@api' -Denv=${params.ENVIRONMENT}"
+                sh "mvn clean test -Dcucumber.filter.tags='@api' -Denv=${params.ENVIRONMENT}"
             }
+        }
 
-            stage('UI Regression') {
-                steps {
-                    echo "API Passed. Running UI Layer for ${params.ENVIRONMENT} on ${params.BROWSER}..."
-                    // Runs ONLY tests tagged with @ui
-                    // DO NOT use clean here, or you'll delete the API results from the report
-                    sh "mvn test -Dcucumber.filter.tags='@ui' -Denv=${params.ENVIRONMENT} -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS}"
-                }
+        stage('UI Regression') {
+            steps {
+                echo "API Passed. Running UI Layer for ${params.ENVIRONMENT} on ${params.BROWSER}..."
+                // Runs ONLY tests tagged with @ui
+                // DO NOT use clean here, or you'll delete the API results from the report
+                sh "mvn test -Dcucumber.filter.tags='@ui' -Denv=${params.ENVIRONMENT} -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS}"
             }
         }
     }
