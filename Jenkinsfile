@@ -15,17 +15,11 @@ pipeline {
             }
         }
 
-        stage('API Health Checks') {
+        stage('Execute Hybrid Test Suite - API Health Checks and UI Regression') {
             steps {
-                echo "Running API Layer Tests for ${params.ENVIRONMENT}..."
-                sh "mvn clean test -Dcucumber.filter.tags='@api' -Denv=${params.ENVIRONMENT}"
-            }
-        }
-
-        stage('UI Regression') {
-            steps {
-                echo "API Passed. Running UI Layer for ${params.ENVIRONMENT} on ${params.BROWSER}..."
-                sh "mvn test -Dcucumber.filter.tags='@ui' -Denv=${params.ENVIRONMENT} -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS}"
+                echo "Running API and UI tests for ${params.ENVIRONMENT}..."
+                // Running both tags in one command ensures a single, unified Extent Report
+                sh "mvn clean test -Dcucumber.filter.tags='@api or @ui' -Denv=${params.ENVIRONMENT} -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS}"
             }
         }
     } // End of Stages
