@@ -3,11 +3,13 @@ package stepDefinitions;
 import io.cucumber.java.en.*;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import models.User;
 import utils.ApiBase;
 import static org.junit.Assert.*;
 
 public class ApiSteps extends ApiBase { // Inherit the specs
     private Response response;
+    private User user;
 
     @Given("I prepare a request for the users endpoint")
     public void i_prepare_a_request() {
@@ -20,6 +22,10 @@ public class ApiSteps extends ApiBase { // Inherit the specs
         response = RestAssured.given()
                 .spec(requestSpec) // Plug in the enterprise spec
                 .get("/users/" + userId);
+
+        // This is the "Enterprise" magic:
+        // Mapping the JSON body directly to our Java Object
+        user = response.as(User.class);
     }
 
     @Then("the API status code should be {int}")
@@ -32,7 +38,8 @@ public class ApiSteps extends ApiBase { // Inherit the specs
 
     @Then("the response body should contain the email {string}")
     public void the_response_body_should_contain_email(String expectedEmail) {
-        String actualEmail = response.jsonPath().getString("email");
-        assertEquals("Email mismatch!", expectedEmail, actualEmail);
+        // Now we use standard Java methods instead of JSON paths
+        assertEquals("Email mismatch!", expectedEmail, user.getEmail());
+        System.out.println("Validated User POJO: " + user.getName());
     }
 }
