@@ -5,6 +5,8 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import models.User;
 import utils.ApiBase;
+
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.junit.Assert.*;
 
 public class ApiSteps extends ApiBase { // Inherit the specs
@@ -34,6 +36,15 @@ public class ApiSteps extends ApiBase { // Inherit the specs
         // AND check the status code
         response.then().spec(responseSpec);
         assertEquals(expectedCode, response.getStatusCode());
+    }
+
+    @Then("the API response should match the user schema")
+    public void the_api_response_should_match_schema() {
+        response.then()
+                .assertThat()
+                .body(matchesJsonSchemaInClasspath("schemas/user-schema.json"));
+
+        System.out.println("Schema Validation Passed!");
     }
 
     @Then("the response body should contain the email {string}")
