@@ -1,8 +1,9 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data; // Import Lombok
 
-// This annotation prevents the test from crashing if the API sends extra fields we don't need
+@Data // This generates Getters, Setters, equals, hashCode, and toString automatically
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
     private int id;
@@ -10,30 +11,19 @@ public class User {
     private String username;
     private String email;
     private String phone;
+    private Address address;
+    private Company company;
 
-    // Getters and Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    // Nested Inner Classes (or separate files)
+    @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Address {
         private String city;
         private String zipcode;
-        public String getCity() { return city; }
-        public void setCity(String city) { this.city = city; }
     }
 
+    @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Company {
         private String name;
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
     }
 }
