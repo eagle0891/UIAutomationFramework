@@ -27,7 +27,12 @@ public class ApiSteps extends ApiBase { // Inherit the specs
 
         // This is the "Enterprise" magic:
         // Mapping the JSON body directly to our Java Object
-        user = response.as(User.class);
+        // Only map to POJO if the request was successful
+        if (response.getStatusCode() == 200) {
+            user = response.as(User.class);
+        } else {
+            System.out.println("Non-200 response received: " + response.getStatusCode());
+        }
     }
 
     @Then("the API status code should be {int}")
