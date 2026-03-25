@@ -5,6 +5,8 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import models.User;
 import utils.ApiBase;
+import utils.ConfigReader;
+import utils.Endpoints;
 
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.junit.Assert.*;
@@ -22,8 +24,9 @@ public class ApiSteps extends ApiBase { // Inherit the specs
     @When("I send a GET request to fetch user with ID {int}")
     public void i_send_a_get_request(int userId) {
         response = RestAssured.given()
-                .spec(requestSpec) // Plug in the enterprise spec
-                .get("/users/" + userId);
+                .spec(requestSpec)
+                .pathParam("id", userId) // Use pathParam instead of string concatenation
+                .get(Endpoints.GET_USER); // Use the Constant
 
         // This is the "Enterprise" magic:
         // Mapping the JSON body directly to our Java Object
@@ -45,11 +48,12 @@ public class ApiSteps extends ApiBase { // Inherit the specs
 
     @Then("the API response should match the user schema")
     public void the_api_response_should_match_schema() {
+        // Pull the path from a config reader or constant
+        String schemaPath = ConfigReader.getProperty("user.schema.path");
+
         response.then()
                 .assertThat()
-                .body(matchesJsonSchemaInClasspath("schemas/user-schema.json"));
-
-        System.out.println("Schema Validation Passed!");
+                .body(matchesJsonSchemaInClasspath(schemaPath));
     }
 
     @Then("the response body should contain the email {string}")
@@ -58,4 +62,6 @@ public class ApiSteps extends ApiBase { // Inherit the specs
         assertEquals("Email mismatch!", expectedEmail, user.getEmail());
         System.out.println("Validated User POJO: " + user.getName());
     }
+
+    // ***TODO: remove all hardcoded values where possible***
 }
