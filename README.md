@@ -42,17 +42,17 @@ Models/POJOs: Type-safe Java objects mirroring API contracts to prevent brittle 
 
 2. Execution Commands
    
-   _Run all tests (API & UI)_:
-Bash
-mvn clean test -Denv=qa -Dbrowser=chrome -Dheadless=true
+   Run all tests (API & UI):
+_Bash
+mvn clean test -Denv=qa -Dbrowser=chrome -Dheadless=true_
 
-   _Run only API Tests_:
-Bash
-mvn test -Dcucumber.filter.tags="@api"
+   Run only API Tests:
+_Bash
+mvn test -Dcucumber.filter.tags="@api"_
 
-   _Run only UI Tests_:
-Bash
-mvn test -Dcucumber.filter.tags="@ui"
+   Run only UI Tests:
+_Bash
+mvn test -Dcucumber.filter.tags="@ui"_
 
 📊 **Reporting & Visibility**
 
